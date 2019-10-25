@@ -1,0 +1,121 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<!-- mapper:根标签，namespace：命名空间，随便写，一般保证命名空间唯一 -->
+<mapper namespace="com.wu.springboot.demo.dao.UserDao">
+    <!--    <resultMap id="testEntity" type="com.wu.entity.TestEntity">-->
+    <!--        <id column="id" property="id"/>-->
+    <!--        <result column="name" property="name"/>-->
+    <!--        <result column="address" property="address"/>-->
+    <!--        <result column="age" property="age"/>-->
+    <!--        <result column="password" property="password"/>-->
+    <!--        <result column="email" property="email"/>-->
+    <!--    </resultMap>-->
+
+    <select id="selectById" resultType="com.wu.springboot.demo.entity.User" parameterType="Integer">
+        select id, name, age, address, email, password from test_table where id = #{id}
+    </select>
+
+    <select id="selectByName" resultType="com.wu.springboot.demo.entity.User" parameterType="String">
+        select id, name, age, address, email, password from test_table where name = #{name}
+    </select>
+
+    <select id="selectListById" resultType="com.wu.springboot.demo.entity.User" parameterType="List">
+        select
+        id, name, age, address, email, password
+        from test_table
+        <where>
+            id in
+            <foreach collection="ids" item="item" open="(" close=")" separator=",">
+                #{item}
+            </foreach>
+        </where>
+    </select>
+
+    <select id="selectListByName" resultType="com.wu.springboot.demo.entity.User" parameterType="List">
+        select
+        id, name, age, address, email, password
+        from test_table where name in
+        <foreach collection="names" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </select>
+
+    <update id="update" parameterType="com.wu.springboot.demo.entity.User">
+        update test_table
+        <set>
+            <if test="data.name neq null and data.name neq '' and data.name.length() gt 0">
+                name=#{data.name},
+            </if>
+            <if test="data.age neq null">
+                age=#{data.age},
+            </if>
+            <if test="data.address neq null and data.address neq '' and data.address.length() gt 0">
+                address=#{data.address},
+            </if>
+            <if test="data.email neq null and data.email neq '' and data.email.length() gt 0">
+                email=#{data.email},
+            </if>
+            <if test="data.password neq null and data.password neq '' and data.password.length() gt 0">
+                password=#{data.password},
+            </if>
+        </set>
+        where id = #{data.id}
+    </update>
+
+    <update id="updateList" parameterType="com.wu.springboot.demo.entity.User">
+        <foreach collection="datas" item="item" separator=";">
+            update test_table
+            <set>
+                <if test="item.name neq null and item.name neq '' and item.name.length() > 0">
+                    name=#{item.name},
+                </if>
+                <if test="item.age neq null">
+                    age=#{item.age},
+                </if>
+                <if test="item.address neq null and item.address neq '' and item.address.length() gt 0">
+                    address=#{item.address},
+                </if>
+                <if test="item.email neq null and item.email neq '' and item.email.length() gt 0">
+                    email=#{item.email},
+                </if>
+                <if test="item.password neq null and item.password neq '' and item.password.length() gt 0">
+                    password=#{item.password},
+                </if>
+            </set>
+            where id = #{item.id}
+        </foreach>
+    </update>
+
+    <insert id="insert" parameterType="com.wu.springboot.demo.entity.User">
+        insert into test_table (
+            name, age, address, email, password
+        )
+        value (
+            #{data.name}, #{data.age}, #{data.address}, #{data.email}, #{data.password}
+        )
+    </insert>
+
+    <insert id="insertList" parameterType="com.wu.springboot.demo.entity.User">
+        insert into test_table (name,age,address,email, password)
+        values
+        <foreach collection="datas" item="item" separator=",">
+            (#{item.name},#{item.age},#{item.address},#{item.email},#{item.password})
+        </foreach>
+
+    </insert>
+
+    <delete id="deleteById" parameterType="Integer">
+        delete from test_table where id=#{id}
+    </delete>
+
+    <delete id="deleteListById" parameterType="List">
+        delete from test_table
+        where id in
+        <foreach collection="ids" item="item" open="(" close=")" separator=",">
+            #{item}
+        </foreach>
+    </delete>
+
+</mapper>
